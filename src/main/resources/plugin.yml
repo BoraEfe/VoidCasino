@@ -1,0 +1,8 @@
+name: voidCasino
+version: '${project.version}'
+main: xyz.voidprison.voidcasino.VoidCasino
+api-version: '1.21'
+
+commands:
+  coinfliplist:
+  playroulette:
