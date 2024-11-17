@@ -23,8 +23,6 @@ import xyz.voidprison.voidcasino.Models.Bet;
 import xyz.voidprison.voidcasino.Models.BetManager;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 
@@ -32,9 +30,6 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
 
     private long balance = 0;
     private String displayBalance;
-
-    private Map<String, Integer> playerBalances = new HashMap<>();
-    private Map<String, String> playerSelectedColors = new HashMap<>();
 
     private String selectedColor = "";
     private BetManager betManager = new BetManager();
