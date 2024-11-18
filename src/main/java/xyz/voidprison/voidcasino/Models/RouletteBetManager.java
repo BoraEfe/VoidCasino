@@ -6,14 +6,11 @@ import java.util.Map;
 public class RouletteBetManager {
     private final Map<String, Map<Integer, RouletteBet>> playerBets = new HashMap<>();
 
-    // Toevoegen van een bet
     public void addBet(String playerName, int rouletteNumber, int betAmount, String color) {
         playerBets.computeIfAbsent(playerName, k -> new HashMap<>()).compute(rouletteNumber, (key, existingBet) -> {
                     if (existingBet == null) {
-                        // Als er nog geen bet bestaat, maak een nieuwe
                         return new RouletteBet(rouletteNumber, betAmount, color);
                     } else {
-                        // Als er al een bet bestaat, voeg het bedrag toe
                         existingBet.addAmount(betAmount);
                         return existingBet;
                     }

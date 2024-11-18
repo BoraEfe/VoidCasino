@@ -10,6 +10,7 @@ public class RouletteBet {
         this.amount = amount;
         this.color = (color != null) ? color.toLowerCase() : null;
     }
+
     public int getNumber(){
         return  number;
     }

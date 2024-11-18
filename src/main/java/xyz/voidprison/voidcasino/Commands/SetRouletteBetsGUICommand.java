@@ -27,7 +27,6 @@ public class SetRouletteBetsGUICommand implements CommandExecutor {
    Player player = (Player) sender;
    Inventory inventory = Bukkit.createInventory(player, 9 * 6, ChatColor.translateAlternateColorCodes('&', "&5&lPlace roulette bet"));
 
-   // Mapping roulette numbers to their colors
    Map<Integer, ChatColor> rouletteNumbers = new HashMap<>();
    rouletteNumbers.put(0, ChatColor.GREEN);
    int[] redNumbers = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
@@ -44,11 +43,11 @@ public class SetRouletteBetsGUICommand implements CommandExecutor {
    int[] slotIndices = {0, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 27, 28, 29, 30, 31, 32, 33, 36, 37, 38, 39, 40, 41, 42, 45, 46, 47};
    int[] rouletteOrder = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36};
 
-   // Fill the inventory dynamically with roulette items
+
    for (int i = 0; i < slotIndices.length; i++) {
-    if (i >= rouletteOrder.length) break; // Prevent index out of bounds
+    if (i >= rouletteOrder.length) break;
     int slot = slotIndices[i];
-    if (slot < 0 || slot >= inventory.getSize()) continue; // Skip invalid slots
+    if (slot < 0 || slot >= inventory.getSize()) continue;
 
     int rouletteNumber = rouletteOrder[i];
     ChatColor color = rouletteNumbers.get(rouletteNumber);

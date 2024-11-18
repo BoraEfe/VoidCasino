@@ -12,7 +12,6 @@ import java.util.Random;
 
 public class FlipCoinflipAnimationGUI {
 
-
     public FlipCoinflipAnimationGUI(Player betCreator, Player betAcceptor, long Amount, String BetCreatorColor, String BetAcceptorColor){
 
         Random random = new Random();

@@ -110,11 +110,17 @@ public class SetRouletteBetsGUIListener implements Listener {
             else {
                 for(int i = 1; i <=36; i++){
                     if (displayName.equals(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + i)|| displayName.equals(ChatColor.RED + "" + ChatColor.BOLD + i)){
-                        player.sendMessage(ChatColor.YELLOW + "You placed a bet on number " + i + "!");
-                        betManager.addBet(playerName, i, betAmount, null);
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
-                        updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), i, playerName);
-                        break;
+                        int betOnNumber = betManager.getTotalBetOnNumber(playerName, i);
+                        if(betOnNumber <50000000){
+                            player.sendMessage(ChatColor.YELLOW + "You placed a bet on number " + i + "!");
+                            betManager.addBet(playerName, i, betAmount, null);
+                            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                            updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), i, playerName);
+                            break;
+                        }
+                        else{
+                            player.sendMessage("Max bet on number!");
+                        }
                     }
                 }
             }
