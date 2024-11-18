@@ -40,6 +40,10 @@ public class RouletteBetManager {
         }
         return 0;
     }
+    public boolean canPlaceBet(String playerName, int number, int betAmount){
+        int currentBet = getTotalBetOnNumber(playerName, number);
+        return (currentBet + betAmount) <=50000000;
+    }
 
     public int getTotalBets(String playerName){
         if(playerBets.containsKey(playerName)){

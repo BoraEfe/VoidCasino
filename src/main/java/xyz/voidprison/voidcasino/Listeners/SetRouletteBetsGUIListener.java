@@ -110,16 +110,15 @@ public class SetRouletteBetsGUIListener implements Listener {
             else {
                 for(int i = 1; i <=36; i++){
                     if (displayName.equals(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + i)|| displayName.equals(ChatColor.RED + "" + ChatColor.BOLD + i)){
-                        int betOnNumber = betManager.getTotalBetOnNumber(playerName, i);
-                        if(betOnNumber <50000000){
+                        if(betManager.canPlaceBet(playerName, i, betAmount)){
                             player.sendMessage(ChatColor.YELLOW + "You placed a bet on number " + i + "!");
                             betManager.addBet(playerName, i, betAmount, null);
                             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
                             updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), i, playerName);
-                            break;
                         }
                         else{
                             player.sendMessage("Max bet on number!");
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                         }
                     }
                 }
@@ -207,7 +206,7 @@ public class SetRouletteBetsGUIListener implements Listener {
             int betAmount = betManager.getTotalBetOnNumber(playerName, i);
             String formattedBetAmount = new RouletteBet(i, betAmount, null).getFormatAmount();
             if (betAmount > 0 && i <=36){
-                allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&7Number: &e" + i +  " " + "&7Amount: &e" + formattedBetAmount));
+                            allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&7Number: &e" + i +  " " + "&7Amount: &e" + formattedBetAmount));
             }
             if(i == 37){
                 allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&eAll RED" +  " " + "&7Amount: &e" + formattedBetAmount));
