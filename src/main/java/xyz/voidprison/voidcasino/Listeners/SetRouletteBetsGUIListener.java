@@ -65,11 +65,13 @@ public class SetRouletteBetsGUIListener implements Listener {
                 if(displayName.equalsIgnoreCase(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Bet All Black")) {
                     betManager.resetBetOnNumber(playerName, 38);
                     player.sendMessage(ChatColor.GREEN + "Your bet on color Black has been reset!");
+                    player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
                     updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 38, playerName);
                 }
-                if(displayName.equalsIgnoreCase(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Bet All Red")) {
+                if(displayName.equalsIgnoreCase(ChatColor.RED + "" + ChatColor.BOLD + "Bet All Red")) {
                     betManager.resetBetOnNumber(playerName, 37);
                     player.sendMessage(ChatColor.GREEN + "Your bet on color Red has been reset!");
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
                     updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 37, playerName);
                 }
                 return;
@@ -144,45 +146,47 @@ public class SetRouletteBetsGUIListener implements Listener {
 
         String formattedBet = new RouletteBet(rouletteNumber, totalBet, null).getFormatAmount();
 
-        ItemStack allRed = new ItemStack(Material.RED_WOOL);
-        ItemStack allBlack = new ItemStack(Material.BLACK_WOOL);
-
-        ItemMeta allRedMeta = allRed.getItemMeta();
-        allRedMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Bet All Red");
-
-        ItemMeta allBlackMeta = allBlack.getItemMeta();
-        allBlackMeta.setDisplayName(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Bet All Black");
-
-
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&eTotal bet on this number: &7" + formattedBet));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&eLeft &7click to bet | &a&l+1M"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&eRight &7click to bet | &a&l+5M"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&ePress Q &7to reset your bet | &4&lREMOVE"));
 
-        List<String> loreForAllRed = new ArrayList<>();
+        if (slot == 8) {
+            ItemStack allRed = new ItemStack(Material.RED_WOOL);
+            ItemMeta allRedMeta = allRed.getItemMeta();
+            allRedMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Bet All Red");
 
-        loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&eTotal bet on this red: &7" + formattedBet));
-        loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&eLeft &7click to bet | &a&l+1M"));
-        loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&eRight &7click to bet | &a&l+5M"));
-        loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&ePress Q &7to reset your bet | &4&lREMOVE"));
+            List<String> loreForAllRed = new ArrayList<>();
+            loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&eTotal bet on this red: &7" + formattedBet));
+            loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&eLeft &7click to bet | &a&l+1M"));
+            loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&eRight &7click to bet | &a&l+5M"));
+            loreForAllRed.add(ChatColor.translateAlternateColorCodes('&', "&ePress Q &7to reset your bet | &4&lREMOVE"));
 
-        List<String> loreForAllBlack = new ArrayList<>();
-        loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&eTotal bet on black: &7" + formattedBet));
-        loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&eLeft &7click to bet | &a&l+1M"));
-        loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&eRight &7click to bet | &a&l+5M"));
-        loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&ePress Q &7to reset your bet | &4&lREMOVE"));
+            allRedMeta.setLore(loreForAllRed);
+            allRed.setItemMeta(allRedMeta);
+            inventory.setItem(8, allRed);
+        }
+        else if (slot == 17) {
+                ItemStack allBlack = new ItemStack(Material.BLACK_WOOL);
+                ItemMeta allBlackMeta = allBlack.getItemMeta();
+                allBlackMeta.setDisplayName(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Bet All Black");
+
+                List<String> loreForAllBlack = new ArrayList<>();
+                loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&eTotal bet on black: &7" + formattedBet));
+                loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&eLeft &7click to bet | &a&l+1M"));
+                loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&eRight &7click to bet | &a&l+5M"));
+                loreForAllBlack.add(ChatColor.translateAlternateColorCodes('&', "&ePress Q &7to reset your bet | &4&lREMOVE"));
+
+                allBlackMeta.setLore(loreForAllBlack);
+                allBlack.setItemMeta(allBlackMeta);
+                inventory.setItem(17, allBlack);
+            }
 
         meta.setLore(lore);
         item.setItemMeta(meta);
-        allRedMeta.setLore(loreForAllRed);
-        allBlackMeta.setLore(loreForAllBlack);
-        allRed.setItemMeta(allRedMeta);
-        allBlack.setItemMeta(allBlackMeta);
 
         inventory.setItem(slot, item);
-        inventory.setItem(8, allRed);
-        inventory.setItem(17, allBlack);
 
         int allBetsTotal = betManager.getTotalBets(playerName);
 
@@ -191,6 +195,22 @@ public class SetRouletteBetsGUIListener implements Listener {
         ItemStack paper = new ItemStack(Material.PAPER);
         ItemMeta paperMeta = paper.getItemMeta();
         paperMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e&lTotal bet: " + formattedAllBetsTotal));
+
+        List<String> allBetsLore = new ArrayList<>();
+        for(int i = 0; i <=38; i++){
+            int betAmount = betManager.getTotalBetOnNumber(playerName, i);
+            String formattedBetAmount = new RouletteBet(i, betAmount, null).getFormatAmount();
+            if (betAmount > 0 && i <=36){
+                allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&7Number: &e" + i +  " " + "&7Amount: &e" + formattedBetAmount));
+            }
+            if(i == 37){
+                allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&eAll RED" +  " " + "&7Amount: &e" + formattedBetAmount));
+            }
+            if(i == 38){
+                allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&eAll BLACK" +  " " + "&7Amount: &e" + formattedBetAmount));
+            }
+        }
+        paperMeta.setLore(allBetsLore);
         paper.setItemMeta(paperMeta);
 
         inventory.setItem(44, paper);

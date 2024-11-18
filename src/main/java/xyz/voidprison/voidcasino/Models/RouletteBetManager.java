@@ -24,6 +24,12 @@ public class RouletteBetManager {
         playerBets.remove(playerName);
     }
 
+    //public String getTotalBetOnColor(String playerName, String color){
+    //    Map<Integer, RouletteBet> playerBetsMap = playerBets.get(playerName);
+    //    if (playerBetsMap != null){
+    //        return playerBetsMap.get(color).getColor();
+    //    }
+    //}
     public void resetBetOnNumber(String playerName, int number) {
         Map<Integer, RouletteBet> playerBetsMap = playerBets.get(playerName);
         if (playerBetsMap != null) {
@@ -48,5 +54,4 @@ public class RouletteBetManager {
     public String getPlayerBetsDebugInfo() {
         return playerBets.toString();
     }
-
 }
