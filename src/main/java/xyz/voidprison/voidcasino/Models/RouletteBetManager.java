@@ -9,7 +9,7 @@ public class RouletteBetManager {
     public void addBet(String playerName, int rouletteNumber, int betAmount, String color) {
         playerBets.computeIfAbsent(playerName, k -> new HashMap<>()).compute(rouletteNumber, (key, existingBet) -> {
                     if (existingBet == null) {
-                        return new RouletteBet(rouletteNumber, betAmount, color);
+                        return new RouletteBet( betAmount, color);
                     } else {
                         existingBet.addAmount(betAmount);
                         return existingBet;
@@ -21,12 +21,6 @@ public class RouletteBetManager {
         playerBets.remove(playerName);
     }
 
-    //public String getTotalBetOnColor(String playerName, String color){
-    //    Map<Integer, RouletteBet> playerBetsMap = playerBets.get(playerName);
-    //    if (playerBetsMap != null){
-    //        return playerBetsMap.get(color).getColor();
-    //    }
-    //}
     public void resetBetOnNumber(String playerName, int number) {
         Map<Integer, RouletteBet> playerBetsMap = playerBets.get(playerName);
         if (playerBetsMap != null) {
@@ -40,9 +34,13 @@ public class RouletteBetManager {
         }
         return 0;
     }
-    public boolean canPlaceBet(String playerName, int number, int betAmount){
+    public boolean canPlaceBetOnNumber(String playerName, int number, int betAmount){
         int currentBet = getTotalBetOnNumber(playerName, number);
         return (currentBet + betAmount) <=50000000;
+    }
+    public boolean canPlaceBetOnColor(String playerName, int number, int betAmount){
+        int currentBet = getTotalBetOnNumber(playerName, number);
+        return (currentBet + betAmount) <=250000000;
     }
 
     public int getTotalBets(String playerName){

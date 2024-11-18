@@ -17,6 +17,7 @@ import org.checkerframework.checker.units.qual.A;
 import xyz.voidprison.voidcasino.Models.RouletteBet;
 import xyz.voidprison.voidcasino.Models.RouletteBetManager;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class SetRouletteBetsGUIListener implements Listener {
@@ -48,7 +49,9 @@ public class SetRouletteBetsGUIListener implements Listener {
 
             if (event.getClick() == ClickType.DROP){
                 for (int i = 0; i <= 36; i++) {
-                    if (displayName.equals(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + i) || displayName.equals(ChatColor.RED + "" + ChatColor.BOLD + i)) {
+                    if (displayName.equals(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + i)
+                            || displayName.equals(ChatColor.RED + "" + ChatColor.BOLD + i)
+                            || displayName.equals(ChatColor.GREEN + "" + ChatColor.BOLD + "0")) {
                         betManager.resetBetOnNumber(playerName, i);
                         player.sendMessage(ChatColor.GREEN + "Your bet on number " + i + " has been reset!");
                         updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), i, playerName);
@@ -56,12 +59,7 @@ public class SetRouletteBetsGUIListener implements Listener {
                         return;
                     }
                 }
-                if (displayName.contains(ChatColor.GREEN + "" + ChatColor.BOLD + "0")) {
-                    betManager.resetBetOnNumber(playerName, 0);
-                    updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 0, playerName);
-                    player.sendMessage(ChatColor.GREEN + "Your bet on number 0 has been reset!");
-                    player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
-                }
+
                 if(displayName.equalsIgnoreCase(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Bet All Black")) {
                     betManager.resetBetOnNumber(playerName, 38);
                     player.sendMessage(ChatColor.GREEN + "Your bet on color Black has been reset!");
@@ -78,48 +76,66 @@ public class SetRouletteBetsGUIListener implements Listener {
             }
 
             if(displayName.contains(ChatColor.RED + "" + ChatColor.BOLD + "Bet All Red")){
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
-                betManager.addBet(playerName, 37, betAmount, "Red");
-                updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 37, playerName);
-                player.sendMessage("All on RED");
+                if(betManager.canPlaceBetOnColor(playerName, 37, betAmount)){
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                    betManager.addBet(playerName, 37, betAmount, "Red");
+                    updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 37, playerName);
+                    player.sendMessage("All on RED");
+                }
+                else{
+                    player.sendMessage("Max bet");
+                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                }
             }
             else if(displayName.contains(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Bet All Black")){
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
-                betManager.addBet(playerName, 38, betAmount, "black");
-                updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 38, playerName);
-                player.sendMessage("All on BLACK");
-            }
-            else if(displayName.contains(ChatColor.GREEN + "" + ChatColor.BOLD + "0")){
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
-                betManager.addBet(playerName, 0, betAmount, null);
-                updateItemLore(player.getOpenInventory().getTopInventory(), 0, 0, playerName);
-                player.sendMessage("Bet on Green");
+                if(betManager.canPlaceBetOnColor(playerName, 38, betAmount)){
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                    betManager.addBet(playerName, 38, betAmount, "black");
+                    updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 38, playerName);
+                    player.sendMessage("All on BLACK");
+                }
+                else{
+                    player.sendMessage("Max bet");
+                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                }
             }
             else if (clickedItem.getType() == Material.REDSTONE_BLOCK){
                 betManager.clearPlayerBets(player.getName());
                 player.sendMessage("BET HAS BEEN RESET");
-
                 Inventory inventory = player.getOpenInventory().getTopInventory();
                 for (int i = 0; i < inventory.getSize(); i++) {
                     updateItemLore(inventory, i, i, player.getName());
                 }
             }
 
-
-
             else {
-                for(int i = 1; i <=36; i++){
-                    if (displayName.equals(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + i)|| displayName.equals(ChatColor.RED + "" + ChatColor.BOLD + i)){
-                        if(betManager.canPlaceBet(playerName, i, betAmount)){
-                            player.sendMessage(ChatColor.YELLOW + "You placed a bet on number " + i + "!");
-                            betManager.addBet(playerName, i, betAmount, null);
-                            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
-                            updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), i, playerName);
-                        }
-                        else{
+                List<Integer> redNumbers = Arrays.asList(1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36);
+                List<Integer> blackNumbers = Arrays.asList(2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35);
+
+                for(int i = 0; i <=36; i++){
+                    if (displayName.equals(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + i)
+                            || displayName.equals(ChatColor.RED + "" + ChatColor.BOLD + i)
+                            || displayName.equals((ChatColor.GREEN + "" + ChatColor.BOLD + i))){
+
+                        if (!betManager.canPlaceBetOnNumber(playerName, i ,betAmount)){
                             player.sendMessage("Max bet on number!");
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                            return;
                         }
+                        if (i == 0){
+                            betManager.addBet(playerName, i, betAmount, "green");
+                        }
+                        else if(redNumbers.contains(i)){
+                            betManager.addBet(playerName, i, betAmount, "red");
+
+                        }
+                        else if(blackNumbers.contains(i)){
+                            betManager.addBet(playerName, i, betAmount, "black");
+                        }
+
+                        player.sendMessage(ChatColor.YELLOW + "You placed a bet on number " + i + "!");
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                        updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), i, playerName);
                     }
                 }
             }
@@ -149,7 +165,7 @@ public class SetRouletteBetsGUIListener implements Listener {
 
         int totalBet = betManager.getTotalBetOnNumber(playerName, rouletteNumber);
 
-        String formattedBet = new RouletteBet(rouletteNumber, totalBet, null).getFormatAmount();
+        String formattedBet = new RouletteBet( totalBet, null).getFormatAmount();
 
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&eTotal bet on this number: &7" + formattedBet));
@@ -195,18 +211,20 @@ public class SetRouletteBetsGUIListener implements Listener {
 
         int allBetsTotal = betManager.getTotalBets(playerName);
 
-        String formattedAllBetsTotal = new RouletteBet(rouletteNumber, allBetsTotal, null).getFormatAmount();
+        String formattedAllBetsTotal = new RouletteBet( allBetsTotal, null).getFormatAmount();
 
         ItemStack paper = new ItemStack(Material.PAPER);
         ItemMeta paperMeta = paper.getItemMeta();
         paperMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e&lTotal bet: " + formattedAllBetsTotal));
 
         List<String> allBetsLore = new ArrayList<>();
+
         for(int i = 0; i <=38; i++){
             int betAmount = betManager.getTotalBetOnNumber(playerName, i);
-            String formattedBetAmount = new RouletteBet(i, betAmount, null).getFormatAmount();
+            String formattedBetAmount = new RouletteBet( betAmount, null).getFormatAmount();
+
             if (betAmount > 0 && i <=36){
-                            allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&7Number: &e" + i +  " " + "&7Amount: &e" + formattedBetAmount));
+                allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&7Number: &e" + i +  " " + "&7Amount: &e" + formattedBetAmount));
             }
             if(i == 37){
                 allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&eAll RED" +  " " + "&7Amount: &e" + formattedBetAmount));
@@ -219,5 +237,6 @@ public class SetRouletteBetsGUIListener implements Listener {
         paper.setItemMeta(paperMeta);
 
         inventory.setItem(44, paper);
+
     }
 }

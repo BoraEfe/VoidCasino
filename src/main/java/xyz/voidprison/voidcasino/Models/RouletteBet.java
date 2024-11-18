@@ -1,19 +1,15 @@
 package xyz.voidprison.voidcasino.Models;
 
 public class RouletteBet {
-    private final int number;
     private int amount;
     private String color;
 
-    public RouletteBet(int numbers, int amount, String color){
-        this.number = numbers;
+    public RouletteBet(int amount, String color){
         this.amount = amount;
         this.color = (color != null) ? color.toLowerCase() : null;
     }
 
-    public int getNumber(){
-        return  number;
-    }
+
     public int getAmount(){
         return amount;
     }
