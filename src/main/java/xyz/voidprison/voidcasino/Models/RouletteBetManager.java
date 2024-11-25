@@ -1,56 +1,62 @@
 package xyz.voidprison.voidcasino.Models;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RouletteBetManager {
-    private final Map<String, Map<Integer, RouletteBet>> playerBets = new HashMap<>();
+    private final Map<String, RouletteBet> playerBets = new HashMap<>();
 
-    public void addBet(String playerName, int rouletteNumber, int betAmount, String color) {
-        playerBets.computeIfAbsent(playerName, k -> new HashMap<>()).compute(rouletteNumber, (key, existingBet) -> {
-                    if (existingBet == null) {
-                        return new RouletteBet( betAmount, color);
-                    } else {
-                        existingBet.addAmount(betAmount);
-                        return existingBet;
-                    }
-                });
+    public void addBet(String playerName, int rouletteNumber, int betAmount, List <String> color) {
+
+        playerBets.computeIfAbsent(playerName, k -> new RouletteBet(0, null, color))
+                .addNumberBet(rouletteNumber, betAmount);
     }
 
     public void clearPlayerBets(String playerName) {
         playerBets.remove(playerName);
     }
 
-    public void resetBetOnNumber(String playerName, int number) {
-        Map<Integer, RouletteBet> playerBetsMap = playerBets.get(playerName);
-        if (playerBetsMap != null) {
-            playerBetsMap.remove(number);
-        }
-    }
-    public int getTotalBetOnNumber(String playerName, int rouletteNumber) {
-        Map<Integer, RouletteBet> playerBetsMap = playerBets.get(playerName);
-        if (playerBetsMap != null && playerBetsMap.containsKey(rouletteNumber)) {
-            return playerBetsMap.get(rouletteNumber).getAmount();
-        }
-        return 0;
-    }
-    public boolean canPlaceBetOnNumber(String playerName, int number, int betAmount){
-        int currentBet = getTotalBetOnNumber(playerName, number);
-        return (currentBet + betAmount) <=50000000;
-    }
-    public boolean canPlaceBetOnColor(String playerName, int number, int betAmount){
-        int currentBet = getTotalBetOnNumber(playerName, number);
-        return (currentBet + betAmount) <=250000000;
+    public List<String> getColor(String playerName){
+        RouletteBet bet = playerBets.get(playerName);
+        return bet != null ? bet.getColor() : null;
     }
 
-    public int getTotalBets(String playerName){
-        if(playerBets.containsKey(playerName)){
-            Map<Integer, RouletteBet> playerBetsMap = playerBets.get(playerName);
-            return playerBetsMap.values().stream().mapToInt(RouletteBet::getAmount).sum();
+    public void resetBetOnNumber(String playerName, int number) {
+        RouletteBet bet = playerBets.get(playerName);
+        if (bet != null) {
+            long removedAmount = bet.getBetForNumber(number);
+            bet.getNumbersBetOn().remove(number);
+            bet.adjustTotalBetAmount(bet.getTotalBetAmount() - removedAmount);
         }
-        return 0;
     }
-    public String getPlayerBetsDebugInfo() {
-        return playerBets.toString();
+
+    public long getTotalBetOnNumber(String playerName, int number){
+        RouletteBet bet = playerBets.get(playerName);
+
+        if(bet != null){
+            return bet.getBetForNumber(number);
+        }
+        return 0L;
     }
+
+    public boolean canPlaceBetOnNumber(String playerName, int number, int betAmount) {
+        long currentBet = getTotalBetOnNumber(playerName, number);
+
+        return (currentBet + betAmount) <= 50_000_000L;
+    }
+    public boolean canPlaceBetOnColor(String playerName, int number, int betAmount){
+        long currentBet = getTotalBetOnNumber(playerName, number);
+        return (currentBet + betAmount) <= 250_000_000L;
+    }
+    public long getTotalBetAmount(String playerName){
+        RouletteBet bet = playerBets.get(playerName);
+        return bet !=null ? bet.getTotalBetAmount() : 0L;
+    }
+    public List<Integer> getNumbersBetOn(String playerName) {
+        RouletteBet bet = playerBets.get(playerName);
+        if (bet != null) {
+            return new ArrayList<>(bet.getNumbersBetOn().keySet());
+        }
+        return new ArrayList<>();
+    }
+
 }

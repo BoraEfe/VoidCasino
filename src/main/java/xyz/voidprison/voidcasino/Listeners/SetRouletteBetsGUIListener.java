@@ -14,11 +14,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.units.qual.A;
+import xyz.voidprison.voidcasino.Functions.RouletteSpinAnimationGUI;
+import xyz.voidprison.voidcasino.Models.Bet;
 import xyz.voidprison.voidcasino.Models.RouletteBet;
 import xyz.voidprison.voidcasino.Models.RouletteBetManager;
 
 import java.lang.reflect.Array;
 import java.util.*;
+
+import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 
 public class SetRouletteBetsGUIListener implements Listener {
 
@@ -31,6 +35,7 @@ public class SetRouletteBetsGUIListener implements Listener {
 
         Player player = (Player) event.getWhoClicked();
         String playerName = player.getName();
+        List<String> colors = new ArrayList<>();
 
         if(player.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', "&5&lPlace roulette bet"))){
             event.setCancelled(true);
@@ -78,7 +83,8 @@ public class SetRouletteBetsGUIListener implements Listener {
             if(displayName.contains(ChatColor.RED + "" + ChatColor.BOLD + "Bet All Red")){
                 if(betManager.canPlaceBetOnColor(playerName, 37, betAmount)){
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
-                    betManager.addBet(playerName, 37, betAmount, "Red");
+                    colors.add("red");
+                    betManager.addBet(playerName, 37, betAmount, colors);
                     updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 37, playerName);
                     player.sendMessage("All on RED");
                 }
@@ -90,7 +96,8 @@ public class SetRouletteBetsGUIListener implements Listener {
             else if(displayName.contains(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Bet All Black")){
                 if(betManager.canPlaceBetOnColor(playerName, 38, betAmount)){
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
-                    betManager.addBet(playerName, 38, betAmount, "black");
+                    colors.add("black");
+                    betManager.addBet(playerName, 38, betAmount, colors);
                     updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 38, playerName);
                     player.sendMessage("All on BLACK");
                 }
@@ -105,6 +112,21 @@ public class SetRouletteBetsGUIListener implements Listener {
                 Inventory inventory = player.getOpenInventory().getTopInventory();
                 for (int i = 0; i < inventory.getSize(); i++) {
                     updateItemLore(inventory, i, i, player.getName());
+                }
+            }
+            else if(clickedItem.getType() == Material.GREEN_STAINED_GLASS){
+                if(betManager.getTotalBetAmount(playerName) > 0){
+
+                    player.playSound(player.getLocation(),BLOCK_NOTE_BLOCK_PLING, 1f ,1f );
+
+                    long totalBet = betManager.getTotalBetAmount(playerName);
+                    List<String> chosenColor = betManager.getColor(playerName);
+                    List rouletteNumbers = betManager.getNumbersBetOn(playerName);
+                    player.sendMessage(playerName + ": "  + totalBet + chosenColor + rouletteNumbers);
+
+                    player.closeInventory();
+
+                  //  new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers, chosenColor);
                 }
             }
 
@@ -123,14 +145,16 @@ public class SetRouletteBetsGUIListener implements Listener {
                             return;
                         }
                         if (i == 0){
-                            betManager.addBet(playerName, i, betAmount, "green");
+                            colors.add("green");
+                            betManager.addBet(playerName, i, betAmount, colors);
                         }
                         else if(redNumbers.contains(i)){
-                            betManager.addBet(playerName, i, betAmount, "red");
-
+                            colors.add("red");
+                            betManager.addBet(playerName, i, betAmount, colors);
                         }
                         else if(blackNumbers.contains(i)){
-                            betManager.addBet(playerName, i, betAmount, "black");
+                            colors.add("black");
+                            betManager.addBet(playerName, i, betAmount, colors);
                         }
 
                         player.sendMessage(ChatColor.YELLOW + "You placed a bet on number " + i + "!");
@@ -163,9 +187,9 @@ public class SetRouletteBetsGUIListener implements Listener {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
-        int totalBet = betManager.getTotalBetOnNumber(playerName, rouletteNumber);
+        long totalBet = betManager.getTotalBetOnNumber(playerName, rouletteNumber);
 
-        String formattedBet = new RouletteBet( totalBet, null).getFormatAmount();
+        String formattedBet = RouletteBet.getFormatAmount(totalBet);
 
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&eTotal bet on this number: &7" + formattedBet));
@@ -209,9 +233,9 @@ public class SetRouletteBetsGUIListener implements Listener {
 
         inventory.setItem(slot, item);
 
-        int allBetsTotal = betManager.getTotalBets(playerName);
+        long allBetsTotal = betManager.getTotalBetAmount(playerName);
 
-        String formattedAllBetsTotal = new RouletteBet( allBetsTotal, null).getFormatAmount();
+        String formattedAllBetsTotal = RouletteBet.getFormatAmount(allBetsTotal);
 
         ItemStack paper = new ItemStack(Material.PAPER);
         ItemMeta paperMeta = paper.getItemMeta();
@@ -220,8 +244,8 @@ public class SetRouletteBetsGUIListener implements Listener {
         List<String> allBetsLore = new ArrayList<>();
 
         for(int i = 0; i <=38; i++){
-            int betAmount = betManager.getTotalBetOnNumber(playerName, i);
-            String formattedBetAmount = new RouletteBet( betAmount, null).getFormatAmount();
+            long betAmount = betManager.getTotalBetOnNumber(playerName, i);
+            String formattedBetAmount = RouletteBet.getFormatAmount(betAmount);
 
             if (betAmount > 0 && i <=36){
                 allBetsLore.add(ChatColor.translateAlternateColorCodes('&',"&7Number: &e" + i +  " " + "&7Amount: &e" + formattedBetAmount));
@@ -237,6 +261,19 @@ public class SetRouletteBetsGUIListener implements Listener {
         paper.setItemMeta(paperMeta);
 
         inventory.setItem(44, paper);
-
+        if(betManager.getTotalBetAmount(playerName) >= 1){
+            ItemStack greenGlass = new ItemStack(Material.GREEN_STAINED_GLASS);
+            ItemMeta greenGlassMeta = greenGlass.getItemMeta();
+            greenGlassMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lReady to Bet!"));
+            greenGlass.setItemMeta(greenGlassMeta);
+            inventory.setItem(53, greenGlass);
+        }
+        else{
+            ItemStack barrier = new ItemStack(Material.BARRIER);
+            ItemMeta barrierMeta = barrier.getItemMeta();
+            barrierMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&4&l FILL IN BET"));
+            barrier.setItemMeta(barrierMeta);
+            inventory.setItem(53, barrier);
+        }
     }
 }
