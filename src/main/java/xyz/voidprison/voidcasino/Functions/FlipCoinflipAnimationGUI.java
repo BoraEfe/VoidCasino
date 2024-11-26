@@ -7,12 +7,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import xyz.voidprison.voidcore.Data.Stars;
 
 import java.util.Random;
 
 public class FlipCoinflipAnimationGUI {
 
     public FlipCoinflipAnimationGUI(Player betCreator, Player betAcceptor, long Amount, String BetCreatorColor, String BetAcceptorColor){
+        long betEarnings = Amount * 2;
 
         Random random = new Random();
         int winner = random.nextInt(2) + 1;
@@ -40,6 +42,8 @@ public class FlipCoinflipAnimationGUI {
                         openBlueInventory(betCreator);
                         openBlueInventory(betAcceptor);
                         betCreator.sendMessage("You have won your own bet!");
+                        System.out.println(betCreator + " " +  betAcceptor+ " " + betEarnings);
+                        Stars.giveStars(betCreator, betEarnings);
                         betAcceptor.sendMessage("You have lost against the creator");
                     }
                 }.runTaskLater(Bukkit.getPluginManager().getPlugin("voidCasino"), 20L);
@@ -59,7 +63,7 @@ public class FlipCoinflipAnimationGUI {
                         openRedInventory(betCreator);
                         openRedInventory(betAcceptor);
                     }
-                }.runTaskLater(Bukkit.getPluginManager().getPlugin("voiCasino"), 15L);
+                }.runTaskLater(Bukkit.getPluginManager().getPlugin("voidCasino"), 15L);
 
                 new BukkitRunnable() {
                     @Override
@@ -75,6 +79,8 @@ public class FlipCoinflipAnimationGUI {
                         openRedInventory(betCreator);
                         openRedInventory(betAcceptor);
                         betCreator.sendMessage("You have won your own bet!");
+                        System.out.println(betCreator + " " +  betAcceptor+ " " + betEarnings);
+                        Stars.giveStars(betCreator, betEarnings);
                         betAcceptor.sendMessage("You have lost against the creator");
                     }
                 }.runTaskLater(Bukkit.getPluginManager().getPlugin("voidCasino"), 25L);
@@ -104,6 +110,7 @@ public class FlipCoinflipAnimationGUI {
                         openBlueInventory(betAcceptor);
                         betAcceptor.sendMessage("You have won against the creator!");
                         betCreator.sendMessage("You have lost your own bet");
+                        Stars.giveStars(betAcceptor, betEarnings);
                     }
                 }.runTaskLater(Bukkit.getPluginManager().getPlugin("voidCasino"), 20L);
             }
@@ -139,11 +146,12 @@ public class FlipCoinflipAnimationGUI {
                         openRedInventory(betAcceptor);
                         betAcceptor.sendMessage("You have won against the creator!");
                         betCreator.sendMessage("You have lost your own bet");
+                        System.out.println(betCreator + " " +  betAcceptor+ " " + betEarnings);
+                        Stars.giveStars(betAcceptor, betEarnings);
                     }
                 }.runTaskLater(Bukkit.getPluginManager().getPlugin("voidCasino"), 25L);
             }
         }
-
     }
 
     public void openBlueInventory(Player player){

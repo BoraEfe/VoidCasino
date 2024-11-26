@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import xyz.voidprison.voidcasino.Functions.FlipCoinflipAnimationGUI;
 import xyz.voidprison.voidcasino.Models.Bet;
 import xyz.voidprison.voidcasino.Models.BetManager;
+import xyz.voidprison.voidcore.Data.Stars;
 
 import java.util.Collections;
 
@@ -58,15 +59,23 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
                 displayName = ChatColor.stripColor(displayName);
                 displayName = displayName.substring(0, displayName.length() - 6);
 
-                player.closeInventory();
                 if (player != Bukkit.getPlayer(displayName)) {
-                    if (selectedColor.equalsIgnoreCase("blue")) {
-                        new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, balance, selectedColor, "red");
-                        betManager.removeBet(Bukkit.getPlayer(displayName));
 
-                    } else {
-                        new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, balance, selectedColor, "blue");
+                    long starBalance = Stars.getStars(player);
+                    if(starBalance >= balance){
+                        starBalance = starBalance - balance;
+                        Stars.setStars(player, starBalance);
+                        if (selectedColor.equalsIgnoreCase("blue")) {
+                            new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, balance, selectedColor, "red");
+                        }
+                        else{
+                            new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, balance, selectedColor, "blue");
+                        }
+                        player.closeInventory();
                         betManager.removeBet(Bukkit.getPlayer(displayName));
+                    }
+                   else{
+                        player.sendMessage("Not enough stars to bet!");
                     }
                 }
                 else{
@@ -111,14 +120,22 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
                 }
                 else if(clickedItem.getType() == Material.GREEN_STAINED_GLASS){
                     if(!selectedColor.isEmpty() && balance> 0){
-                        player.playSound(player.getLocation(),BLOCK_NOTE_BLOCK_PLING, 1f ,1f );
+                        long starBalance = Stars.getStars(player);
+                        if(starBalance >= balance){
+                            starBalance = starBalance - balance;
+                            Stars.setStars(player, starBalance);
+                            player.playSound(player.getLocation(),BLOCK_NOTE_BLOCK_PLING, 1f ,1f );
 
-                        Bet newBet = new Bet(player.getName(), selectedColor, balance);
+                            Bet newBet = new Bet(player.getName(), selectedColor, balance);
 
-                        betManager.addBet(newBet);
+                            betManager.addBet(newBet);
 
-                        player.sendMessage(ChatColor.GREEN + "Bet placed successfully! You bet " + displayBalance + " on " + selectedColor + ".");
-                        player.closeInventory();
+                            player.sendMessage(ChatColor.GREEN + "Bet placed successfully! You bet " + displayBalance + " on " + selectedColor + ".");
+                            player.closeInventory();
+                        }
+                        else{
+                            player.sendMessage("Not enough stars!");
+                        }
                     }
                 }
 

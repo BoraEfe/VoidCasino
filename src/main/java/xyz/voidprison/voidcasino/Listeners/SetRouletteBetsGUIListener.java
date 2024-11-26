@@ -18,6 +18,8 @@ import xyz.voidprison.voidcasino.Functions.RouletteSpinAnimationGUI;
 import xyz.voidprison.voidcasino.Models.Bet;
 import xyz.voidprison.voidcasino.Models.RouletteBet;
 import xyz.voidprison.voidcasino.Models.RouletteBetManager;
+import xyz.voidprison.voidcore.Data.Stars;
+
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -115,18 +117,26 @@ public class SetRouletteBetsGUIListener implements Listener {
                 }
             }
             else if(clickedItem.getType() == Material.GREEN_STAINED_GLASS){
-                if(betManager.getTotalBetAmount(playerName) > 0){
+                if(betManager.getTotalBetAmount(playerName) > 0 ){
 
-                    player.playSound(player.getLocation(),BLOCK_NOTE_BLOCK_PLING, 1f ,1f );
-
+                    long starBalance = Stars.getStars(player);
                     long totalBet = betManager.getTotalBetAmount(playerName);
-                    List<String> chosenColor = betManager.getColor(playerName);
-                    List rouletteNumbers = betManager.getNumbersBetOn(playerName);
-                    player.sendMessage(playerName + ": "  + totalBet + chosenColor + rouletteNumbers);
 
-                    player.closeInventory();
+                    if (starBalance >= totalBet) {
+                        player.playSound(player.getLocation(), BLOCK_NOTE_BLOCK_PLING, 1f, 1f);
+                        starBalance = starBalance - totalBet;
+                        Stars.setStars(player, starBalance);
 
-                  //  new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers, chosenColor);
+                        List<String> chosenColor = betManager.getColor(playerName);
+                        List rouletteNumbers = betManager.getNumbersBetOn(playerName);
+                        player.sendMessage(playerName + ": " + totalBet + chosenColor + rouletteNumbers);
+
+                        player.closeInventory();
+                        //new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers, chosenColor);
+                    }
+                    else{
+                        player.sendMessage("Not enough stars to bet!");
+                    }
                 }
             }
 

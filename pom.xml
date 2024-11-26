@@ -67,5 +67,12 @@
           <version>1.21-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
+      <dependency>
+          <groupId>xyz.voidprison</groupId>
+          <artifactId>VoidCore</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>system</scope>
+          <systemPath>${project.basedir}/libs/VoidCore-1.0-SNAPSHOT.jar</systemPath>
+      </dependency>
   </dependencies>
 </project>
