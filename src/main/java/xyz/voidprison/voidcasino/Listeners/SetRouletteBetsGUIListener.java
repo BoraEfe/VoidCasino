@@ -127,15 +127,15 @@ public class SetRouletteBetsGUIListener implements Listener {
                         starBalance = starBalance - totalBet;
                         Stars.setStars(player, starBalance);
 
-                        List<String> chosenColor = betManager.getColor(playerName);
-                        List rouletteNumbers = betManager.getNumbersBetOn(playerName);
-                        player.sendMessage(playerName + ": " + totalBet + chosenColor + rouletteNumbers);
+                        List<String> chosenColors = betManager.getColor(playerName);
+                        Map<Integer, Long> rouletteNumbers = betManager.getNumbersBetOn(playerName);
+                        player.sendMessage(playerName + ": " + totalBet + chosenColors + rouletteNumbers);
 
                         player.closeInventory();
-                        //new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers, chosenColor);
+                        new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers.size(), String.join(", ", chosenColors));
                     }
                     else{
-                        player.sendMessage("Not enough stars to bet!");
+                        player.sendMessage("&5&lERROR! &8|&D Not enough stars for this bet!");
                     }
                 }
             }

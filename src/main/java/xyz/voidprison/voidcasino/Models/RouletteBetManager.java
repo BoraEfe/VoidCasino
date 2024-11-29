@@ -51,12 +51,12 @@ public class RouletteBetManager {
         RouletteBet bet = playerBets.get(playerName);
         return bet !=null ? bet.getTotalBetAmount() : 0L;
     }
-    public List<Integer> getNumbersBetOn(String playerName) {
+    public Map<Integer, Long> getNumbersBetOn(String playerName) {
         RouletteBet bet = playerBets.get(playerName);
         if (bet != null) {
-            return new ArrayList<>(bet.getNumbersBetOn().keySet());
+            return new HashMap<>(bet.getNumbersBetOn());
         }
-        return new ArrayList<>();
+        return new HashMap<>();
     }
 
 }

@@ -6,6 +6,7 @@ xyz\voidprison\voidcasino\Models\RouletteBet.class
 xyz\voidprison\voidcasino\Functions\FlipCoinflipAnimationGUI$8.class
 xyz\voidprison\voidcasino\Functions\FlipCoinflipAnimationGUI$12.class
 xyz\voidprison\voidcasino\Functions\FlipCoinflipAnimationGUI$14.class
+xyz\voidprison\voidcasino\Functions\RouletteSpinAnimationGUI$1.class
 xyz\voidprison\voidcasino\Functions\FlipCoinflipAnimationGUI.class
 xyz\voidprison\voidcasino\Functions\FlipCoinflipAnimationGUI$3.class
 xyz\voidprison\voidcasino\Listeners\ListOfCoinflipBetsGUIListener.class
