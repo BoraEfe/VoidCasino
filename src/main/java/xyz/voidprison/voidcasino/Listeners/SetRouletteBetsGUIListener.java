@@ -39,7 +39,8 @@ public class SetRouletteBetsGUIListener implements Listener {
         String playerName = player.getName();
         List<String> colors = new ArrayList<>();
 
-        if(player.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', "&5&lPlace roulette bet"))){
+        if(player.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', "&5&lPlace roulette bet"))
+                || player.getOpenInventory().getTitle().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', "&5&lRoulette spin"))){
             event.setCancelled(true);
 
             ItemStack clickedItem = event.getCurrentItem();
@@ -132,7 +133,7 @@ public class SetRouletteBetsGUIListener implements Listener {
                         player.sendMessage(playerName + ": " + totalBet + chosenColors + rouletteNumbers);
 
                         player.closeInventory();
-                        new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers.size(), String.join(", ", chosenColors));
+                        new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers, String.join(", ", chosenColors));
                     }
                     else{
                         player.sendMessage("&5&lERROR! &8|&D Not enough stars for this bet!");

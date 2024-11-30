@@ -45,12 +45,14 @@ public class RouletteBet {
         return numbersBetOn;
     }
 
-    public static String getFormatAmount(long amount){
-        if( amount  >= 1000000L && amount < 1000000000L){
-            return String.format("%dM",amount / 1000000);
-        }
-        else if ( amount >= 1000000000L && amount < 1000000000000L){
-            return String.format("%.2fB", amount /1000000000.0);
+    public static String getFormatAmount(long amount) {
+        boolean isNegative = amount < 0;
+        long absAmount = Math.abs(amount);
+
+        if (absAmount >= 1000000L && absAmount < 1000000000L) {
+            return (isNegative ? "-" : "") + String.format("%dM", absAmount / 1000000);
+        } else if (absAmount >= 1000000000L && absAmount < 1000000000000L) {
+            return (isNegative ? "-" : "") + String.format("%.2fB", absAmount / 1000000000.0);
         }
         return String.valueOf(amount);
     }
