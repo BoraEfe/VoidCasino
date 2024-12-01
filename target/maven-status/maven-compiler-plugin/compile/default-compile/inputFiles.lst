@@ -1,10 +1,11 @@
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Commands\SetRouletteBetsGUICommand.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\RouletteBetManager.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\VoidCasino.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\BetManager.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Commands\ListOfCoinflipBetsGUICommand.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Functions\FlipCoinflipAnimationGUI.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Listeners\SetRouletteBetsGUIListener.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\RouletteBet.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\Bet.java
-C:\Users\Bora\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Listeners\ListOfCoinflipBetsGUIListener.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Commands\ListOfCoinflipBetsGUICommand.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Listeners\SetRouletteBetsGUIListener.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\RouletteBetManager.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Functions\RouletteSpinAnimationGUI.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Listeners\ListOfCoinflipBetsGUIListener.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Functions\FlipCoinflipAnimationGUI.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\VoidCasino.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Commands\SetRouletteBetsGUICommand.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\Bet.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\RouletteBet.java
+C:\Users\Bora Efe\IdeaProjects\VoidCasino\src\main\java\xyz\voidprison\voidcasino\Models\BetManager.java

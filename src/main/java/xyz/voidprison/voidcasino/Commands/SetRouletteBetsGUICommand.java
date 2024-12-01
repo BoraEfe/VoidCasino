@@ -136,10 +136,6 @@ public class SetRouletteBetsGUICommand implements CommandExecutor {
    paperMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e&lTotal bet: 0"));
    paper.setItemMeta(paperMeta);
 
-   ItemStack redstoneBlock = new ItemStack(Material.REDSTONE_BLOCK);
-   ItemMeta redstoneBlockMeta = redstoneBlock.getItemMeta();
-   redstoneBlockMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&4&lRESET AMOUNT"));
-   redstoneBlock.setItemMeta(redstoneBlockMeta);
 
    for (int slot : new int[]{7, 16, 25, 34, 43, 52}) {
     if (slot >= 0 && slot < inventory.getSize()) {
@@ -149,7 +145,6 @@ public class SetRouletteBetsGUICommand implements CommandExecutor {
 
    if (8 < inventory.getSize()) inventory.setItem(8, allRed);
    if (17 < inventory.getSize()) inventory.setItem(17, allBlack);
-   if (51 < inventory.getSize()) inventory.setItem(51, redstoneBlock);
    if (53 < inventory.getSize()) inventory.setItem(53, barrier);
    if (44 < inventory.getSize()) inventory.setItem(44, paper);
 

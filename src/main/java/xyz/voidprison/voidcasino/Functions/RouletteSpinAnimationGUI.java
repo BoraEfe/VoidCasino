@@ -6,12 +6,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.voidprison.voidcasino.Models.RouletteBet;
 import xyz.voidprison.voidcasino.Models.RouletteBetManager;
 import xyz.voidprison.voidcasino.VoidCasino;
+import xyz.voidprison.voidcore.Data.Stars;
 
 import java.util.Map;
 import java.util.Random;
@@ -150,13 +152,11 @@ public class RouletteSpinAnimationGUI {
         long totalEarnings = 0;
         long totalProfit = 0;
         long betAmount = 0;
-        boolean hasWon = false;
 
         if (rouletteNumbers.containsKey(winningNumber)) {
             betAmount = rouletteNumbers.get(winningNumber);
             totalEarnings = (betAmount * 35) + betAmount;
             totalProfit = totalEarnings - totalBet;
-            hasWon = true;
 
            // player.sendMessage(ChatColor.GREEN + "You won! Bet on number " + winningNumber + " with " + betAmount + " stars.");
         }
@@ -164,13 +164,11 @@ public class RouletteSpinAnimationGUI {
             betAmount = rouletteNumbers.get(37);
             totalEarnings = betAmount * 2;
             totalProfit = totalEarnings - totalBet;
-            hasWon = true;
         }
         else if (rouletteNumbers.containsKey(38) && rouletteNumbers.get(38) > 0 && isNumberInArray(winningNumber, blackNumbers)) {
             betAmount = rouletteNumbers.get(38);
             totalEarnings = betAmount * 2;
             totalProfit = totalEarnings - totalBet;
-            hasWon = true;
         }
 
         String formattedStake = RouletteBet.getFormatAmount(totalBet);
@@ -183,10 +181,10 @@ public class RouletteSpinAnimationGUI {
 
         totalProfit = totalEarnings - totalBet;
         if(totalProfit <= 0){
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l YOU &4&lDIDN'T &d&lWIN THIS ROUND"));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lYOU &4&lDIDN'T &d&lWIN THIS ROUND"));
         }
         if (totalProfit > 0){
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l YOU &2&lHAVE WON &d&lTHIS ROUND"));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lYOU &2&lHAVE WON &d&lTHIS ROUND"));
 
         }
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5&l------------------"));
@@ -194,5 +192,10 @@ public class RouletteSpinAnimationGUI {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lTOTAL EARNINGS: &e&l" + formattedEarnings));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5&l------------------"));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lNET PROFIT: &e&l" + formattedProfit));
+
+        if (totalProfit > 0) {
+            Stars.giveStars(player, totalEarnings);
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lYou have been given: &e&l" + formattedProfit + " " + "&d&lStars"));
+        }
     }
 }

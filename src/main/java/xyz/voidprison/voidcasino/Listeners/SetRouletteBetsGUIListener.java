@@ -109,14 +109,6 @@ public class SetRouletteBetsGUIListener implements Listener {
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                 }
             }
-            else if (clickedItem.getType() == Material.REDSTONE_BLOCK){
-                betManager.clearPlayerBets(player.getName());
-                player.sendMessage("BET HAS BEEN RESET");
-                Inventory inventory = player.getOpenInventory().getTopInventory();
-                for (int i = 0; i < inventory.getSize(); i++) {
-                    updateItemLore(inventory, i, i, player.getName());
-                }
-            }
             else if(clickedItem.getType() == Material.GREEN_STAINED_GLASS){
                 if(betManager.getTotalBetAmount(playerName) > 0 ){
 
