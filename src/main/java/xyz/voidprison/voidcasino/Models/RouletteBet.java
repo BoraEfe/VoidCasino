@@ -20,11 +20,7 @@ public class RouletteBet {
         numbersBetOn.merge(number, amount, Long::sum);
         totalBetAmount += amount;
     }
-    public void addColor(String color) {
-        if (color != null && !color.isEmpty()) {
-            colors.add(color.toLowerCase());
-        }
-    }
+
 
     public long getBetForNumber(int number){
         return numbersBetOn.getOrDefault(number, 0L);

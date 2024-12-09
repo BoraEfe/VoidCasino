@@ -13,17 +13,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import xyz.voidprison.voidcasino.Commands.ListOfCoinflipBetsGUICommand;
+import xyz.voidprison.voidcasino.Commands.SetRouletteBetsGUICommand;
 import xyz.voidprison.voidcasino.Functions.FlipCoinflipAnimationGUI;
 import xyz.voidprison.voidcasino.Models.Bet;
 import xyz.voidprison.voidcasino.Models.BetManager;
 import xyz.voidprison.voidcore.Data.Stars;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 
@@ -33,7 +38,11 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
     private String displayBalance;
 
     private String selectedColor = "";
-    private BetManager betManager = new BetManager();
+    private BetManager betManager;
+
+    public ListOfCoinflipBetsGUIListener(BetManager betManager, ListOfCoinflipBetsGUICommand command){
+        this.betManager = betManager;
+    }
 
     @EventHandler
 
@@ -48,34 +57,53 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
             event.setCancelled(true);
 
             ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem != null && clickedItem.getType() == Material.NETHER_STAR &&
+
+            if (clickedItem == null) return;
+            if(clickedItem.getType() == Material.NETHER_STAR &&
                     clickedItem.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&e&lCreate bet"))){
                 player.closeInventory();
                 openCreateBetGUI(player);
             }
-            if (clickedItem != null && clickedItem.getType() == Material.PAPER){
 
-                String displayName = clickedItem.getItemMeta().getDisplayName();
-                displayName = ChatColor.stripColor(displayName);
-                displayName = displayName.substring(0, displayName.length() - 6);
+            String displayName = clickedItem.getItemMeta().getDisplayName();
+            displayName = ChatColor.stripColor(displayName);
+            displayName = displayName.substring(0, displayName.length() - 6);
+
+            if(clickedItem.getType() == Material.PAPER && event.getClick() == ClickType.DROP){
+                event.setCancelled(true);
+
+                if(displayName.equalsIgnoreCase(playerName)){
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + "Your bet has been removed. Your" + ChatColor.YELLOW + " stars " + ChatColor.LIGHT_PURPLE + "have been given back");
+                    betManager.removeBet(player);
+                    return;
+                }
+            }
+
+            if(clickedItem.getType() == Material.PAPER && event.getClick() == ClickType.LEFT){
+                long betAmount = betManager.getBetAmount(displayName);
 
                 if (player != Bukkit.getPlayer(displayName)) {
-
                     long starBalance = Stars.getStars(player);
-                    if(starBalance >= balance){
-                        starBalance = starBalance - balance;
+
+                    if(starBalance >= betAmount){
+
+                        starBalance = starBalance - betAmount;
                         Stars.setStars(player, starBalance);
+
+                        String betCreatorColor = betManager.getSelectedColor(displayName);
+
+                        player.closeInventory();
+                        betManager.deleteBetOnStart(Bukkit.getPlayer(displayName));
+
                         if (selectedColor.equalsIgnoreCase("blue")) {
-                            new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, balance, selectedColor, "red");
+                            new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, betAmount, betCreatorColor, "red");
                         }
                         else{
-                            new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, balance, selectedColor, "blue");
+                            new FlipCoinflipAnimationGUI(Bukkit.getPlayer(displayName), player, betAmount, betCreatorColor, "blue");
                         }
-                        player.closeInventory();
-                        betManager.removeBet(Bukkit.getPlayer(displayName));
                     }
                    else{
-                        player.sendMessage("Not enough stars to bet!");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5&lERROR! &8|&D Not enough stars for this bet!"));
                     }
                 }
                 else{
@@ -129,12 +157,11 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
                             Bet newBet = new Bet(player.getName(), selectedColor, balance);
 
                             betManager.addBet(newBet);
-
                             player.sendMessage(ChatColor.GREEN + "Bet placed successfully! You bet " + displayBalance + " on " + selectedColor + ".");
                             player.closeInventory();
                         }
                         else{
-                            player.sendMessage("Not enough stars!");
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5&lERROR! &8|&D Not enough stars for this bet!"));
                         }
                     }
                 }
@@ -151,6 +178,7 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
             }
         }
     }
+
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event){
         Player player = (Player) event.getPlayer();

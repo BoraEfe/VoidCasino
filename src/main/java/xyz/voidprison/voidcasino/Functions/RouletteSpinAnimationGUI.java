@@ -3,17 +3,19 @@ package xyz.voidprison.voidcasino.Functions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.voidprison.voidcasino.Models.RouletteBet;
-import xyz.voidprison.voidcasino.Models.RouletteBetManager;
-import xyz.voidprison.voidcasino.VoidCasino;
 import xyz.voidprison.voidcore.Data.Stars;
+import org.bukkit.enchantments.Enchantment;
+
 
 import java.util.Map;
 import java.util.Random;
@@ -21,6 +23,7 @@ import java.util.Random;
 public class RouletteSpinAnimationGUI {
 
     private final Player player;
+    public boolean isSpinning = false;
     private final long totalBet;
     private final Map<Integer, Long> rouletteNumbers;
     private final String chosenColors;
@@ -47,6 +50,8 @@ public class RouletteSpinAnimationGUI {
     private void setupGUI() {
         for (int i = 0; i < 27; i++) {
             gui.setItem(i, createRouletteItem(Material.BLACK_STAINED_GLASS_PANE, " "));
+            gui.setItem(4, createRouletteItem(Material.ORANGE_STAINED_GLASS_PANE, " "));
+            gui.setItem(22, createRouletteItem(Material.ORANGE_STAINED_GLASS_PANE, " "));
         }
         player.openInventory(gui);
     }
@@ -82,15 +87,19 @@ public class RouletteSpinAnimationGUI {
     }
 
     private void startSpin() {
+        isSpinning = true;
         new BukkitRunnable() {
             private int spinTicks = 0;
             private int currentIndex = random.nextInt(rouletteWheel.length);
+
+
 
             @Override
             public void run() {
                 if (spinTicks >= 60) {
                     int winningNumber = rouletteWheel[currentIndex - 1];
                     checkForPlayersEarnings(rouletteNumbers, winningNumber);
+                    isSpinning = false;
                     cancel();
                     return;
                 }
@@ -101,20 +110,28 @@ public class RouletteSpinAnimationGUI {
                     Material colorMaterial = getColorMaterial(number);
 
                     int slot = 9 + i; // Posities in de GUI (9 t/m 17)
-                    gui.setItem(slot, createRouletteItem(colorMaterial, ChatColor.GOLD + "Number: " + number));
+                    gui.setItem(slot, createRouletteItem(colorMaterial, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Number: " + number));
                 }
-
                 int middleNumber = rouletteWheel[currentIndex];
                 Material middleMaterial = getColorMaterial(middleNumber);
-                gui.setItem(13, createRouletteItem(middleMaterial, ChatColor.GOLD + "number: " + middleNumber));
 
-                player.playSound(player.getLocation(), "block.note_block.pling", 1f, 1f);
+                ItemStack middleItem = createRouletteItem(middleMaterial,ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "number: " + middleNumber);
+                ItemMeta middleMeta = middleItem.getItemMeta();
+                if(middleMeta !=null){
+                    middleMeta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 1,true);
+                    middleMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    middleItem.setItemMeta(middleMeta);
+                }
+
+                gui.setItem(13, middleItem);
+
+                player.playSound(player.getLocation(), "block.note_block.pling", 0.5f, 0.5f);
 
                 currentIndex = (currentIndex + 1) % rouletteWheel.length;
 
                 spinTicks++;
             }
-        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("voidCasino"), 0L, 2L); // Start direct, interval: 2 ticks
+        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("voidCasino"), 0L, 2L);
     }
 
 
@@ -193,7 +210,7 @@ public class RouletteSpinAnimationGUI {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5&l------------------"));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lNET PROFIT: &e&l" + formattedProfit));
 
-        if (totalProfit > 0) {
+        if (totalProfit >= 0) {
             Stars.giveStars(player, totalEarnings);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lYou have been given: &e&l" + formattedProfit + " " + "&d&lStars"));
         }

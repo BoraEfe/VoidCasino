@@ -16,17 +16,17 @@ public class Bet {
     public String getBetCreator(){
         return betCreator;
     }
-
+    public long getAmount(){
+        return amount;
+    }
     public String getSelectedColor(){
         return selectedColor;
     }
-
-    public String getFormatAmount(){
-        if( amount  >= 1000000L && amount < 1000000000L){
-            return String.format("%dM",amount / 1000000);
-        }
-        else if ( amount >= 1000000000L && amount < 1000000000000L){
-            return String.format("%.2fB", amount /1000000000.0);
+    public String getFormatAmount() {
+        if (amount >= 1000000L && amount < 1000000000L) {
+            return String.format("%dM", amount / 1000000);
+        } else if (amount >= 1000000000L && amount < 1000000000000L) {
+            return String.format("%.2fB", amount / 1000000000.0);
         }
         return String.valueOf(amount);
     }

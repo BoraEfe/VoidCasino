@@ -58,5 +58,4 @@ public class RouletteBetManager {
         }
         return new HashMap<>();
     }
-
 }

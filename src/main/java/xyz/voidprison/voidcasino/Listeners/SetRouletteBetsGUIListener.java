@@ -109,7 +109,7 @@ public class SetRouletteBetsGUIListener implements Listener {
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                 }
             }
-            else if(clickedItem.getType() == Material.GREEN_STAINED_GLASS){
+            else if(clickedItem.getType() == Material.GREEN_STAINED_GLASS ){
                 if(betManager.getTotalBetAmount(playerName) > 0 ){
 
                     long starBalance = Stars.getStars(player);
@@ -122,13 +122,12 @@ public class SetRouletteBetsGUIListener implements Listener {
 
                         List<String> chosenColors = betManager.getColor(playerName);
                         Map<Integer, Long> rouletteNumbers = betManager.getNumbersBetOn(playerName);
-                        player.sendMessage(playerName + ": " + totalBet + chosenColors + rouletteNumbers);
 
                         player.closeInventory();
                         new RouletteSpinAnimationGUI(player, totalBet, rouletteNumbers, String.join(", ", chosenColors));
                     }
                     else{
-                        player.sendMessage("&5&lERROR! &8|&D Not enough stars for this bet!");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5&lERROR! &8|&D Not enough stars for this bet!"));
                     }
                 }
             }
