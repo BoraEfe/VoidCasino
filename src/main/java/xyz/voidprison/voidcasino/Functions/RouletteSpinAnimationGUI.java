@@ -210,9 +210,9 @@ public class RouletteSpinAnimationGUI {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5&l------------------"));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lNET PROFIT: &e&l" + formattedProfit));
 
-        if (totalProfit >= 0) {
+        if (totalEarnings >= 0) {
             Stars.giveStars(player, totalEarnings);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lYou have been given: &e&l" + formattedProfit + " " + "&d&lStars"));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&lYou have been given: &e&l" + formattedEarnings + " " + "&d&lStars"));
         }
     }
 }

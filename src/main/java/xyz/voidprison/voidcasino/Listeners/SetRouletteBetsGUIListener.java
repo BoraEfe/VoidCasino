@@ -89,7 +89,6 @@ public class SetRouletteBetsGUIListener implements Listener {
                     colors.add("red");
                     betManager.addBet(playerName, 37, betAmount, colors);
                     updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 37, playerName);
-                    player.sendMessage("All on RED");
                 }
                 else{
                     player.sendMessage("Max bet");
@@ -102,7 +101,6 @@ public class SetRouletteBetsGUIListener implements Listener {
                     colors.add("black");
                     betManager.addBet(playerName, 38, betAmount, colors);
                     updateItemLore(player.getOpenInventory().getTopInventory(), event.getSlot(), 38, playerName);
-                    player.sendMessage("All on BLACK");
                 }
                 else{
                     player.sendMessage("Max bet");

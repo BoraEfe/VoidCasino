@@ -130,6 +130,7 @@ public class FlipCoinflipAnimationGUI {
             openBlueInventory(player);
         }
         else if(color.equalsIgnoreCase("red")){
+            player.playSound(player.getLocation(), "block.anvil.fall", 0.7f, 0.7f);
             openRedInventory(player);
         }
     }
@@ -142,6 +143,7 @@ public class FlipCoinflipAnimationGUI {
         for (int i = 0; i < 26 + 1; i++) {
             inventory.setItem(i, blueWool);
         }
+        player.playSound(player.getLocation(), "entity.snowball.throw", 0.7f, 0.7f);
         player.openInventory(inventory);
     }
 
@@ -152,6 +154,7 @@ public class FlipCoinflipAnimationGUI {
         for (int i = 0; i < 26 + 1; i++) {
             inventory.setItem(i, redWool);
         }
+        player.playSound(player.getLocation(), "entity.snowball.throw", 0.7f, 0.7f);
         player.openInventory(inventory);
     }
     public String formatAmount(long amount) {

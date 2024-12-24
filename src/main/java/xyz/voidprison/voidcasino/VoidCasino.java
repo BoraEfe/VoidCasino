@@ -2,6 +2,7 @@ package xyz.voidprison.voidcasino;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.voidprison.voidcasino.Commands.ListOfCoinflipBetsGUICommand;
+import xyz.voidprison.voidcasino.Commands.NpcTalkCommand;
 import xyz.voidprison.voidcasino.Commands.SetRouletteBetsGUICommand;
 import xyz.voidprison.voidcasino.Listeners.ListOfCoinflipBetsGUIListener;
 import xyz.voidprison.voidcasino.Listeners.SetRouletteBetsGUIListener;
@@ -14,6 +15,8 @@ public final class VoidCasino extends JavaPlugin {
         BetManager betManager = new BetManager(this);
         ListOfCoinflipBetsGUICommand  listOfCoinflipBetsGUICommand = new ListOfCoinflipBetsGUICommand();
         // Plugin startup logic
+
+        getCommand("npctalk").setExecutor(new NpcTalkCommand(this));
 
         this.getCommand("coinfliplist").setExecutor(listOfCoinflipBetsGUICommand);
         getServer().getPluginManager().registerEvents(new ListOfCoinflipBetsGUIListener(betManager, listOfCoinflipBetsGUICommand), this);

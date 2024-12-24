@@ -5,4 +5,7 @@ api-version: '1.21'
 
 commands:
   coinfliplist:
+    aliases: [cf, coinflip]
   playroulette:
+    aliases: [roulette]
+  npctalk:

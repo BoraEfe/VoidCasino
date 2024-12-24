@@ -5,36 +5,30 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.voidprison.voidcasino.Commands.ListOfCoinflipBetsGUICommand;
-import xyz.voidprison.voidcasino.Commands.SetRouletteBetsGUICommand;
 import xyz.voidprison.voidcasino.Functions.FlipCoinflipAnimationGUI;
 import xyz.voidprison.voidcasino.Models.Bet;
 import xyz.voidprison.voidcasino.Models.BetManager;
 import xyz.voidprison.voidcore.Data.Stars;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.UUID;
 
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 
 public class ListOfCoinflipBetsGUIListener implements Listener {
 
-    private long balance = 0;
     private String displayBalance;
 
     private String selectedColor = "";
@@ -52,13 +46,17 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
 
         Player player = (Player) event.getWhoClicked();
         String playerName = player.getName();
+        UUID playerUUID = player.getUniqueId();
 
         if (player.getOpenInventory().getTitle().equals(ChatColor.translateAlternateColorCodes('&', "&5&lList of coinflip bets"))){
             event.setCancelled(true);
 
             ItemStack clickedItem = event.getCurrentItem();
 
-            if (clickedItem == null) return;
+            if (clickedItem == null || !clickedItem.hasItemMeta() || !clickedItem.getItemMeta().hasDisplayName()) {
+                return;
+            }
+
             if(clickedItem.getType() == Material.NETHER_STAR &&
                     clickedItem.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&e&lCreate bet"))){
                 player.closeInventory();
@@ -126,35 +124,85 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1.2f, 1.2f);
                 }
                 if (clickedItem.getType() == Material.GOLD_NUGGET) {
-                    balance += 1000000;
+                    long currentStake = betManager.getStake(playerUUID);
+                    long newStake = currentStake + 1000000;
+                    betManager.putTemporaryStakeInHashMap(playerUUID, newStake);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                    updateCreateBetGUI(player);
                 }
                 else if (clickedItem.getType() == Material.GOLD_INGOT) {
-                    balance += 10000000;
+                    long currentStake = betManager.getStake(playerUUID);
+                    long newStake = currentStake + 10000000;
+                    betManager.putTemporaryStakeInHashMap(playerUUID, newStake);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                    updateCreateBetGUI(player);
                 }
                 else if (clickedItem.getType() == Material.GOLD_BLOCK) {
-                    balance += 100000000;
+                    long currentStake = betManager.getStake(playerUUID);
+                    long newStake = currentStake + 100000000;
+                    betManager.putTemporaryStakeInHashMap(playerUUID, newStake);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                    updateCreateBetGUI(player);
                 }
-                else if (clickedItem.getType() == Material.IRON_NUGGET && balance >=1) {
-                    balance -= 1000000;
+                else if (clickedItem.getType() == Material.IRON_NUGGET) {
+                    long currentStake = betManager.getStake(playerUUID);
+                    if(currentStake >= 1000000){
+                        long newStake = currentStake - 1000000;
+                        betManager.putTemporaryStakeInHashMap(playerUUID, newStake);
+
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                        updateCreateBetGUI(player);
+                    }
+                    else{
+                        player.sendMessage(ChatColor.RED + "Not enough stake!");
+                    }
                 }
-                else if (clickedItem.getType() == Material.IRON_INGOT && balance >=10) {
-                    balance -= 10000000;
+                else if (clickedItem.getType() == Material.IRON_INGOT) {
+                    long currentStake = betManager.getStake(playerUUID);
+                    if(currentStake >= 10000000){
+                        long newStake = currentStake - 10000000;
+                        betManager.putTemporaryStakeInHashMap(playerUUID, newStake);
+
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                        updateCreateBetGUI(player);
+                    }
+                    else{
+                        player.sendMessage(ChatColor.RED + "Not enough stake!");
+                    }
                 }
-                else if (clickedItem.getType() == Material.IRON_BLOCK && balance >=100) {
-                    balance -= 100000000;
+                else if (clickedItem.getType() == Material.IRON_BLOCK) {
+                    long currentStake = betManager.getStake(playerUUID);
+                    if(currentStake >= 100000000){
+                        long newStake = currentStake - 100000000;
+                        betManager.putTemporaryStakeInHashMap(playerUUID, newStake);
+
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                        updateCreateBetGUI(player);
+                    }
+                    else{
+                        player.sendMessage(ChatColor.RED + "Not enough stake!");
+                    }
                 }
                 else if (clickedItem.getType() == Material.REDSTONE_BLOCK){
-                    balance = 0;
+                    long currentStake = betManager.getStake(playerUUID);
+                    long newStake = currentStake - currentStake;
+                    betManager.putTemporaryStakeInHashMap(playerUUID, newStake);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1f, 1f);
+                    updateCreateBetGUI(player);
                 }
                 else if(clickedItem.getType() == Material.GREEN_STAINED_GLASS){
-                    if(!selectedColor.isEmpty() && balance> 0){
+                    long currentStake = betManager.getStake(playerUUID);
+                    if(!selectedColor.isEmpty() && currentStake> 0){
                         long starBalance = Stars.getStars(player);
-                        if(starBalance >= balance){
-                            starBalance = starBalance - balance;
+                        if(starBalance >= currentStake){
+                            starBalance = starBalance - currentStake;
                             Stars.setStars(player, starBalance);
                             player.playSound(player.getLocation(),BLOCK_NOTE_BLOCK_PLING, 1f ,1f );
 
-                            Bet newBet = new Bet(player.getName(), selectedColor, balance);
+                            Bet newBet = new Bet(player.getName(), selectedColor, currentStake);
 
                             betManager.addBet(newBet);
                             player.sendMessage(ChatColor.GREEN + "Bet placed successfully! You bet " + displayBalance + " on " + selectedColor + ".");
@@ -165,12 +213,14 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
                         }
                     }
                 }
-
-                if( balance  >= 1000000L && balance < 1000000000L){
-                    displayBalance = (balance / 1000000L) + "M";
+                long currentStake = betManager.getStake(playerUUID);
+                if( currentStake  >= 1000000L && currentStake < 1000000000L){
+                    displayBalance = (currentStake / 1000000L) + "M";
                 }
-                else if ( balance >= 1000000000L && balance < 1000000000000L){
-                    displayBalance = String.format("%.3fB", balance /1000000000.0);
+                else if ( currentStake >= 1000000000L && currentStake < 1000000000000L){
+                    displayBalance = String.format("%.3fB", currentStake /1000000000.0);
+                }else{
+                    displayBalance = String.valueOf(currentStake);
                 }
                 if(player.getOpenInventory().getTitle().equals(ChatColor.translateAlternateColorCodes('&', "&5&lCreate coinflip bet"))){
                     updateCreateBetGUI(player);
@@ -182,21 +232,26 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event){
         Player player = (Player) event.getPlayer();
+        UUID playerUUID = player.getUniqueId();
 
         if (player.getOpenInventory().getTitle().equals(ChatColor.translateAlternateColorCodes('&', "&5&lCreate coinflip bet"))){
             selectedColor = "";
-            balance = 0;
+            betManager.deleteStake(playerUUID);
         }
     }
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
+        UUID playerUUID = player.getUniqueId();
+        betManager.deleteStake(playerUUID);
 
         if(betManager.hasBet(player.getName())){
             betManager.removeBet(player.getPlayer());
         }
     }
     private void openCreateBetGUI(Player player){
+        UUID playerUUID = player.getUniqueId();
+        long currentStake = betManager.getStake(playerUUID);
 
         Inventory inventory = Bukkit.createInventory(player, 9 * 5, ChatColor.translateAlternateColorCodes('&', "&5&lCreate coinflip bet"));
         ItemStack grayGlass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
@@ -242,7 +297,7 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
         ironIngotMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&4&l-10M"));
         ironBlockMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&4&l-100M"));
 
-        paperMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&e&l" + balance));
+        paperMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&e&l" + currentStake));
         redstoneBlockMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&4&lRESET AMOUNT"));
 
         redCoin.setItemMeta(redCoinMeta);
@@ -280,7 +335,11 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
     private void updateCreateBetGUI(Player player){
         Inventory inventory = player.getOpenInventory().getTopInventory();
 
-        if ((selectedColor.equals("red") || selectedColor.equals("blue")) && balance > 0) {
+        UUID playerUUID = player.getUniqueId();
+        long currentStake = betManager.getStake(playerUUID);
+
+
+        if ((selectedColor.equals("red") || selectedColor.equals("blue")) && currentStake > 0) {
             ItemStack greenGlass = new ItemStack(Material.GREEN_STAINED_GLASS);
             ItemMeta greenMeta = greenGlass.getItemMeta();
             greenMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lReady to Bet!"));
@@ -325,5 +384,4 @@ public class ListOfCoinflipBetsGUIListener implements Listener {
         blueCoin.setItemMeta(blueCoinMeta);
         inventory.setItem(15, blueCoin);
     }
-
 }

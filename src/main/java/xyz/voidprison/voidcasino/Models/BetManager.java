@@ -21,6 +21,7 @@ import java.util.*;
 
 public class BetManager{
 
+    private final HashMap<UUID, Long> playerStake = new HashMap<>();
     private final File betsFile;
     private static FileConfiguration config = null;
 
@@ -44,6 +45,16 @@ public class BetManager{
         loadBets();
     }
 
+    public void putTemporaryStakeInHashMap(UUID playerUUID, long stake){
+        playerStake.put(playerUUID, stake);
+    }
+
+    public long getStake(UUID playerUUID){
+        return playerStake.getOrDefault(playerUUID, 0L);
+    }
+    public void deleteStake(UUID playerUUID){
+        playerStake.remove(playerUUID);
+    }
     public String getFormatAmount(long amount) {
         if (amount >= 1000000L && amount < 1000000000L) {
             return String.format("%dM", amount / 1000000);
